@@ -1,87 +1,95 @@
-🚀 TadreebLMS
+🚀 TadreebLMS :
 
-TadreebLMS is a powerful, open-source Learning Management System (LMS) designed to deliver modern, scalable, and professional education and training platforms.
-It supports academic institutions, training centers, and professional development organizations by providing a complete solution for course delivery, learner management, assessments, and certification.
+TadreebLMS is a modern, open-source Learning Management System (LMS) built to support educational institutions, training organizations, and professional development programs.
+It enables seamless delivery of digital learning through structured courses, assessments, progress tracking, and certification.
 
 Our organization is dedicated to developing future leaders through innovative and impactful education. We aim to equip students, professionals, and leaders with essential knowledge, skills, and strategic thinking to excel in a dynamic global environment.
 
-🌍 Why TadreebLMS?
+🌍 About TadreebLMS :
 
-TadreebLMS has been developed as an extensible and customizable LMS inspired by real-world training platforms used in professional environments. It is built to support:
+TadreebLMS is designed to be flexible, scalable, and customizable, making it suitable for a wide range of learning use cases such as:
 
-Continuous professional development
+Academic learning
 
-Institutional and corporate training
+Corporate and professional training
 
-Online and blended learning models
+Skill development programs
 
-As an open-source project, TadreebLMS allows organizations to fully own, customize, and scale their learning infrastructure.
+Online and blended learning environments
 
-📚 Key Features
+As an open-source platform, TadreebLMS allows organizations to fully control their learning infrastructure, adapt workflows, and extend functionality as needed.
+
+📚 Key Features :
 👥 User & Role Management
 
-Student / Trainee enrollment
+Student registration and enrollment
 
-Instructor / Teacher registration
+Instructor onboarding and management
 
-Admin role with full platform control
+Admin-level platform control
 
-Role-based access control
+Role-based access permissions
 
-🎓 Course Management
+🎓 Course Management :
 
-Create and manage courses
+Create, organize, and manage courses
 
-Organize courses into categories
+Categorize courses by subject or skill area
 
-Assign courses to individuals or groups
+Assign courses to users or groups
 
-Support for professional, technical, and soft-skill courses
+Track course completion percentage
 
-Track learning progress per course
+📝 Assessments & Evaluation :
 
-📝 Assessments & Learning Evaluation
+Quizzes and evaluations linked to courses
 
-Course-based quizzes and assessments
+Manual and automatic grading
 
-Performance tracking and grading
+Learner performance tracking
 
-Evaluation support for professional training programs
+📊 Progress & Reporting :
 
-📊 Progress & Reporting
+Individual learner dashboards
 
-Percentage-based course completion tracking
+Course progress and completion insights
 
-Learner progress dashboards
+Instructor and admin-level reports
 
-Instructor overview of student performance
+🏅 Certificates :
 
-Administrative reports for institutions
+Automatic certificate generation upon course completion
 
-🏅 Certificates & Verification
+Downloadable and shareable certificates
 
-Automatic certificate issuance upon course completion
+Customizable certificate templates
 
-Downloadable course certificates
+Optional certificate verification support
 
-Certificate verification support
+📚 Learning Resources :
 
-Suitable for professional and compliance-based training
+Resource libraries for supplementary materials
 
-📚 Learning Resources
+Upload and manage documents and learning assets
 
-Resource / library section for course materials
+🌐 Platform Capabilities :
 
-Upload and manage supporting documents
+Multi-language support (e.g. English, Arabic)
 
-Centralized access to training references
-
-🌐 Platform Capabilities
-
-Multi-language support (e.g. English / Arabic)
-
-Responsive design for desktop and mobile
+Responsive and mobile-friendly design
 
 Secure authentication system
 
-Scalable for cloud or on-premise deployment
+Cloud or on-premise deployment
+
+🛠️ Technology Stack :
+
+Backend: PHP / Laravel
+
+Frontend: HTML, CSS, JavaScript
+
+Database: MySQL / PostgreSQL
+
+Authentication: Role-based access control
+
+Deployment: Cloud | On-Premise
