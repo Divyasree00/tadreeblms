@@ -1,8 +1,7 @@
 <?php
 ob_start();
 
-require __DIR__ . '/../vendor/autoload.php';
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+
 $installedFlag = __DIR__ . '/../installed';
 
 // If installer is re-opened, remove installed flag to allow fresh install
@@ -15,6 +14,7 @@ if (file_exists($installedFlag)) {
 // --------------------
 $steps = [
     'check' => 'Checking Environment',
+    'composer' => 'Composer Install',
     'db_config' => 'Database Configuration',
     'env' => 'Creating .env File',
     'key' => 'Generating APP_KEY',
@@ -126,6 +126,57 @@ try {
             }
             break;
 
+        case 'composer':
+
+
+            try {
+                out("Running Composer install...");
+                ini_set('max_execution_time', 3000);  // 50 minutes
+                ini_set('memory_limit', '1G');
+                set_time_limit(0);
+                $publicPath   = __DIR__;                    // public/
+                $projectPath  = realpath(__DIR__ . '/..');  // project root
+                $composerPath = $publicPath . '/composer.phar';
+
+                // Ensure composer home exists
+                $composerHome = $projectPath . '/.composer';
+                if (!is_dir($composerHome)) {
+                    mkdir($composerHome, 0777, true);
+                }
+
+                // Set COMPOSER_HOME variable so composer runs properly
+                putenv('COMPOSER_HOME=' . $composerHome);
+
+                // Run composer install
+                $cmd = "cd /d \"$projectPath\" && php \"$composerPath\" install --no-interaction --prefer-dist 2>&1";
+
+                // Execute and get output
+                exec($cmd, $output, $return_var);
+
+                out("Executing: <pre>$cmd</pre>");
+
+                $output = shell_exec($cmd);
+
+                if ($output === null) {
+                    //file_put_contents($projectPath.'/install-log.txt', implode("\n", $output));
+                    throw new Exception("shell_exec returned NULL — command not allowed by server.");
+                }
+
+                out("<pre>$output</pre>");
+
+                if (str_contains($output, "Generating optimized autoload files")) {
+                    out("✔ Composer install completed successfully.");
+                } else {
+                    out("<div style='color: orange; font-weight: bold;'>⚠ Composer executed but output looks incomplete.</div>");
+                }
+            } catch (Exception $e) {
+                out("<div style='color: red; font-weight: bold;'>❌ Error: " . $e->getMessage() . "</div>");
+                exit;
+            }
+            
+
+            break;
+
         case 'db_config':
             echo "
                 <form method='POST'>
@@ -196,8 +247,11 @@ try {
                 if ($ret !== 0) throw new Exception("Seeding failed");
                 file_put_contents($seedDoneFile, "done");
                 out("✔ Seeding complete");
-                // ✅ Run additional Artisan commands
-                $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+                //require __DIR__ . '/../vendor/autoload.php';
+                // $app = require_once __DIR__ . '/../bootstrap/app.php';
+                // // ✅ Run additional Artisan commands
+                // $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
                 // out("Running translations import...");
                 // $kernel->call('translations:import');
