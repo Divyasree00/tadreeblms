@@ -136,8 +136,17 @@ try {
 
             // REQUIRED EXTENSIONS
             $requiredExtensions = [
-                'pdo', 'pdo_mysql', 'openssl', 'mbstring', 'tokenizer',
-                'xml', 'ctype', 'json', 'bcmath', 'fileinfo', 'curl'
+                'pdo',
+                'pdo_mysql',
+                'openssl',
+                'mbstring',
+                'tokenizer',
+                'xml',
+                'ctype',
+                'json',
+                'bcmath',
+                'fileinfo',
+                'curl'
             ];
 
             out("<br><strong>PHP Extensions:</strong><br>");
@@ -191,35 +200,85 @@ try {
                 ini_set('memory_limit', '1G');
                 set_time_limit(0);
 
-                $projectPath  = realpath(__DIR__ . '/..');
+                $projectPath = realpath(__DIR__ . '/..');
+
+                // Detect OS
                 $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 
-                $composerCmd = "composer"; // use global composer
+                // Determine composer command based on OS
+                if ($isWindows) {
 
-                $cd = $isWindows ? "cd /d \"$projectPath\"" : "cd \"$projectPath\"";
+                    // Windows composer paths
+                    $composerPaths = [
+                        'composer',                                   // If in PATH
+                        'C:\\ProgramData\\ComposerSetup\\bin\\composer.bat',
+                        'C:\\ProgramData\\ComposerSetup\\composer.phar',
+                        'C:\\Program Files\\Composer\\composer.bat',
+                        'C:\\composer\\composer.bat',
+                    ];
+                } else {
+
+                    // Linux composer paths
+                    $composerPaths = [
+                        '/usr/local/bin/composer',
+                        '/usr/bin/composer',
+                        'composer',                                   // fallback
+                    ];
+                }
+
+                // Find a working composer path
+                $composerCmd = null;
+                foreach ($composerPaths as $path) {
+                    if (stripos($path, 'composer') !== false) {
+                        $test = shell_exec("$path --version 2>&1");
+                        if ($test && strpos($test, 'Composer') !== false) {
+                            $composerCmd = $path;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$composerCmd) {
+                    fail("Composer not found. Install globally and ensure it is in PATH.");
+                }
+
+                out("Using Composer: <b>$composerCmd</b><br>");
+
+                // Correct CD command
+                $cd = $isWindows
+                    ? "cd /d \"$projectPath\""
+                    : "cd \"$projectPath\"";
+
+                // Final command
                 $cmd = "$cd && $composerCmd install --no-interaction --prefer-dist 2>&1";
 
                 out("Executing:<br><pre>$cmd</pre>");
 
+                // Run composer
                 $output = shell_exec($cmd);
 
                 if ($output === null) {
-                    throw new Exception("shell_exec() returned NULL — command may be blocked.");
+                    fail("shell_exec returned NULL — likely disabled in php.ini");
                 }
 
                 out("<pre>$output</pre>");
 
-                if (strpos($output, "Generating optimized autoload files") !== false) {
+                // Check success
+                if (
+                    strpos($output, "Generating optimized autoload files") !== false ||
+                    strpos($output, "Nothing to install") !== false ||
+                    strpos($output, "Package operations") !== false
+                ) {
                     out("✔ Composer install completed successfully.");
                 } else {
-                    out("<div style='color: orange;'>⚠ Composer executed, but may not have finished cleanly.</div>");
+                    fail("Composer failed. Output:<br><pre>$output</pre>");
                 }
             } catch (Exception $e) {
-                out("<div style='color:red'>❌ Composer error: " . $e->getMessage() . "</div>");
-                exit;
+                fail("Composer error: " . $e->getMessage());
             }
 
             break;
+
 
 
         case 'db_config':
@@ -338,7 +397,6 @@ try {
         default:
             throw new Exception("Invalid step: $current");
     }
-
 } catch (Exception $e) {
     fail("Installer error: " . $e->getMessage());
 }
