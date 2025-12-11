@@ -1,14 +1,6 @@
 <?php
 ob_start();
 
-// --------------------
-// Remove existing .env if present
-// --------------------
-$envFile = __DIR__ . '/../.env';
-if (file_exists($envFile)) {
-    unlink($envFile);
-    file_put_contents(__DIR__ . '/install.log', date('Y-m-d H:i:s') . " - Existing .env removed\n", FILE_APPEND);
-}
 
 // --------------------
 // Remove existing db_config.json if present
