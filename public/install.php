@@ -339,10 +339,11 @@ try {
 
                 // Set environment variables for Composer
                 if ($isWindows) {
-                    $cmd = "set COMPOSER_HOME=%TEMP% && cd /d \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --no-security-audit 2>&1";
+                    $cmd = "set COMPOSER_HOME=%TEMP% && cd /d \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
                 } else {
-                    $cmd = "export COMPOSER_HOME=/tmp && export HOME=/tmp && cd \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --no-security-audit 2>&1";
+                    $cmd = "export COMPOSER_HOME=/tmp && export HOME=/tmp && cd \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
                 }
+
 
 
                 out("Executing:<br><pre>$cmd</pre>");
