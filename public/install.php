@@ -194,7 +194,7 @@ try {
             // 4️⃣ Git safe.directory check
             // --------------------
             $projectPath = realpath(__DIR__ . '/..');
-            if ($outSystemOS == 'Windows') {
+            if(0) {//if ($outSystemOS == 'Windows') {
                 $gitSafe = shell_exec("git config --global --get-all safe.directory | findstr \"$projectPath\"");
                 if (!$gitSafe) {
                     out("⚠ Git safe.directory not set — run: <code>git config --global --add safe.directory $projectPath</code><br>");
