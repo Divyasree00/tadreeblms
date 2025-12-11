@@ -303,48 +303,58 @@ try {
                 $projectPath = realpath(__DIR__ . '/..');
                 $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 
-                // Detect Composer path
-                if ($isWindows) {
-                    $composerPaths = [
+                // --- Required PHP extensions check ---
+                $requiredExtensions = ['curl', 'gd', 'mbstring', 'xml', 'zip', 'bcmath', 'pdo_mysql'];
+                $missingExtensions = [];
+                foreach ($requiredExtensions as $ext) {
+                    if (!extension_loaded($ext)) {
+                        $missingExtensions[] = $ext;
+                    }
+                }
+                if (!empty($missingExtensions)) {
+                    fail("Missing required PHP extensions: " . implode(', ', $missingExtensions));
+                }
+
+                // --- Detect Composer path ---
+                $composerPaths = $isWindows
+                    ? [
                         'composer',
                         'C:\\ProgramData\\ComposerSetup\\bin\\composer.bat',
                         'C:\\ProgramData\\ComposerSetup\\composer.phar',
                         'C:\\Program Files\\Composer\\composer.bat',
                         'C:\\composer\\composer.bat',
-                    ];
-                } else {
-                    $composerPaths = [
+                    ]
+                    : [
                         '/usr/local/bin/composer',
                         '/usr/bin/composer',
                         'composer',
                     ];
-                }
 
                 $composerCmd = null;
                 foreach ($composerPaths as $path) {
-                    if (stripos($path, 'composer') !== false) {
-                        $test = shell_exec("$path --version 2>&1");
-                        if ($test && stripos($test, 'Composer') !== false) {
-                            $composerCmd = $path;
-                            break;
-                        }
+                    $test = @shell_exec("$path --version 2>&1");
+                    if ($test && stripos($test, 'Composer') !== false) {
+                        $composerCmd = $path;
+                        break;
                     }
                 }
-
                 if (!$composerCmd) {
                     fail("Composer not found. Install globally and ensure it is in PATH.");
                 }
 
                 out("Using Composer: <b>$composerCmd</b><br>");
 
-                // Set environment variables for Composer
+                // --- Determine command: install vs update ---
+                $lockFile = $projectPath . '/composer.lock';
                 if ($isWindows) {
-                    $cmd = "set COMPOSER_HOME=%TEMP% && cd /d \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
+                    $cmd = file_exists($lockFile)
+                        ? "set COMPOSER_HOME=%TEMP% && cd /d \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs --audit=false 2>&1"
+                        : "set COMPOSER_HOME=%TEMP% && cd /d \"$projectPath\" && $composerCmd update --no-interaction --prefer-dist --ignore-platform-reqs --audit=false 2>&1";
                 } else {
-                    $cmd = "export COMPOSER_HOME=/tmp && export HOME=/tmp && cd \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
+                    $cmd = file_exists($lockFile)
+                        ? "export COMPOSER_HOME=/tmp && export HOME=/tmp && cd \"$projectPath\" && $composerCmd install --no-interaction --prefer-dist --ignore-platform-reqs --audit=false 2>&1"
+                        : "export COMPOSER_HOME=/tmp && export HOME=/tmp && cd \"$projectPath\" && $composerCmd update --no-interaction --prefer-dist --ignore-platform-reqs --audit=false 2>&1";
                 }
-
-
 
                 out("Executing:<br><pre>$cmd</pre>");
 
@@ -356,21 +366,21 @@ try {
 
                 out("<pre>$output</pre>");
 
-                // Check success
+                // --- Check success ---
                 if (
                     strpos($output, "Generating optimized autoload files") !== false ||
                     strpos($output, "Nothing to install") !== false ||
                     strpos($output, "Package operations") !== false
                 ) {
-                    out("✔ Composer install completed successfully.");
+                    out("✔ Composer operation completed successfully.");
                 } else {
                     fail("Composer failed. Output:<br><pre>$output</pre>");
                 }
             } catch (Exception $e) {
                 fail("Composer error: " . $e->getMessage());
             }
-
             break;
+
 
 
         case 'db_config':
