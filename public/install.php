@@ -1,35 +1,46 @@
 <?php
 ob_start();
 
-
 // ------------------------------------------
-// ALWAYS RESET INSTALLER FILES ON LOAD
+// RESET INSTALLER ONLY ON STEP = start
 // ------------------------------------------
-$basePath = realpath(__DIR__ . '/..');
+$step = $_GET['step'] ?? 'start';
 
-// Always recreate db_config.json
-$dbConfigFile = __DIR__ . '/db_config.json';
-if (file_exists($dbConfigFile)) unlink($dbConfigFile);
-file_put_contents($dbConfigFile, '{}');  // empty fresh JSON
+if ($step === 'start') {
 
-// Remove .env
-$envFile = $basePath . '/.env';
-if (file_exists($envFile)) unlink($envFile);
+    $basePath = realpath(__DIR__ . '/..');
 
-// Remove flags
-$installedFlag = $basePath . '/installed';
-$migrationDoneFile = $basePath . '/.migrations_done';
-$seedDoneFile = $basePath . '/.seed_done';
+    // Remove old flags
+    foreach ([
+        $basePath . '/installed',
+        $basePath . '/.migrations_done',
+        $basePath . '/.seed_done',
+        __DIR__ . '/db_config.json',
+    ] as $file) {
+        if (file_exists($file)) unlink($file);
+    }
 
-foreach ([$installedFlag, $migrationDoneFile, $seedDoneFile] as $file) {
-    if (file_exists($file)) unlink($file);
+    // Recreate empty db_config.json
+    file_put_contents(__DIR__ . '/db_config.json', '{}');
+
+    // Recreate fresh .env from .env.example
+    $envFile = $basePath . '/.env';
+    $example = $basePath . '/.env.example';
+    if (file_exists($envFile)) unlink($envFile);
+
+    if (file_exists($example)) {
+        copy($example, $envFile);
+    } else {
+        // emergency fallback
+        file_put_contents($envFile, '');
+    }
+
+    // Log reset
+    file_put_contents(__DIR__ . '/install.log',
+        date('Y-m-d H:i:s') . " - Installer reset on start\n",
+        FILE_APPEND
+    );
 }
-
-// Log reset
-file_put_contents(__DIR__ . '/install.log',
-    date('Y-m-d H:i:s') . " - Installer reset\n",
-    FILE_APPEND
-);
 // --------------------
 // Installer Steps
 // --------------------
@@ -52,6 +63,7 @@ $envFile = __DIR__ . '/../.env';
 $migrationDoneFile = __DIR__ . '/../.migrations_done';
 $seedDoneFile = __DIR__ . '/../.seed_done';
 $dbConfigFile = __DIR__ . '/db_config.json';
+$installedFlag = __DIR__ . '/../installed'; 
 
 // --------------------
 // Helpers
