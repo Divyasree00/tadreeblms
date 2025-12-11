@@ -41,8 +41,12 @@
     <style>
         body {
             font-family: Arial;
-            background: #f2f2f2;
+            
             padding: 20px;
+
+            background-color: #d0dbb9;
+            position: relative;
+
         }
 
         .container {
@@ -52,6 +56,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
         }
 
         h2 {
@@ -122,10 +127,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="nav-item px-3 dropdown">
-            <!-- <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
+            <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="d-md-down-none">Language (EN)</span>
-            </a> -->
+            </a>
 
             <!-- <div class="dropdown-menu dropdown-menu-right add-dropmenu-position" aria-labelledby="navbarDropdownLanguageLink">
 
