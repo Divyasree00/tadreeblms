@@ -2,24 +2,34 @@
 ob_start();
 
 
-// --------------------
-// Remove existing db_config.json if present
-// --------------------
+// ------------------------------------------
+// ALWAYS RESET INSTALLER FILES ON LOAD
+// ------------------------------------------
+$basePath = realpath(__DIR__ . '/..');
+
+// Always recreate db_config.json
 $dbConfigFile = __DIR__ . '/db_config.json';
-if (file_exists($dbConfigFile)) {
-    unlink($dbConfigFile);
-    file_put_contents(__DIR__ . '/install.log', date('Y-m-d H:i:s') . " - Existing db_config.json removed\n", FILE_APPEND);
+if (file_exists($dbConfigFile)) unlink($dbConfigFile);
+file_put_contents($dbConfigFile, '{}');  // empty fresh JSON
+
+// Remove .env
+$envFile = $basePath . '/.env';
+if (file_exists($envFile)) unlink($envFile);
+
+// Remove flags
+$installedFlag = $basePath . '/installed';
+$migrationDoneFile = $basePath . '/.migrations_done';
+$seedDoneFile = $basePath . '/.seed_done';
+
+foreach ([$installedFlag, $migrationDoneFile, $seedDoneFile] as $file) {
+    if (file_exists($file)) unlink($file);
 }
 
-// --------------------
-// Remove installed flag
-// --------------------
-$installedFlag = __DIR__ . '/../installed';
-if (file_exists($installedFlag)) {
-    unlink($installedFlag);
-}
-
-
+// Log reset
+file_put_contents(__DIR__ . '/install.log',
+    date('Y-m-d H:i:s') . " - Installer reset\n",
+    FILE_APPEND
+);
 // --------------------
 // Installer Steps
 // --------------------
