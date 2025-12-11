@@ -297,7 +297,7 @@ try {
             try {
                 out("Running Composer operation...");
                 ini_set('max_execution_time', 3000);
-                ini_set('memory_limit', '1G');
+                ini_set('memory_limit', '2G');
                 set_time_limit(0);
 
                 $projectPath = realpath(__DIR__ . '/..');
@@ -335,13 +335,28 @@ try {
 
                 out("Using Composer: <b>$composerCmd</b><br>");
 
-                // --- Determine command: update always (safer for missing lock file) ---
+                // --- Ensure vendor/ is ready ---
+                $vendorPath = $projectPath . '/vendor';
+                if (file_exists($vendorPath) && !is_dir($vendorPath)) {
+                    unlink($vendorPath); // remove file if vendor exists as file
+                }
+                if (!is_dir($vendorPath)) {
+                    mkdir($vendorPath, 0775, true);
+                }
+
+                // --- Ensure composer.lock exists ---
+                $lockPath = $projectPath . '/composer.lock';
+                if (!file_exists($lockPath)) {
+                    touch($lockPath); // dummy lock to prevent errors
+                }
+
+                // --- Determine command: always update ---
                 $cmd = $isWindows
                     ? "cd /d \"$projectPath\" && $composerCmd update --no-interaction --prefer-dist --ignore-platform-reqs 2>&1"
                     : "cd \"$projectPath\" && COMPOSER_HOME=/tmp HOME=/tmp $composerCmd update --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
 
-                // --- Run as web server user (Linux only) ---
-                if (!$isWindows && posix_getuid() === 0) { // root check
+                // --- Run as web server user on Linux ---
+                if (!$isWindows && posix_getuid() === 0) {
                     $webUser = 'www-data'; // adjust if different web user
                     $cmd = "sudo -u $webUser COMPOSER_HOME=/tmp HOME=/tmp cd \"$projectPath\" && $composerCmd update --no-interaction --prefer-dist --ignore-platform-reqs 2>&1";
                 }
@@ -370,6 +385,7 @@ try {
                 fail("Composer error: " . $e->getMessage());
             }
             break;
+
 
 
 
