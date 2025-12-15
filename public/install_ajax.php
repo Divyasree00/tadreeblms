@@ -4,7 +4,21 @@ header('Content-Type: application/json');
 
 /*
 |--------------------------------------------------------------------------
-| Base Paths
+| Config PHP 8.2 binary
+|--------------------------------------------------------------------------
+*/
+$phpBin = '/usr/bin/php8.2'; // path to PHP 8.2 CLI
+if (!file_exists($phpBin)) {
+    echo json_encode([
+        'success' => false,
+        'message' => "❌ PHP 8.2 binary not found at $phpBin"
+    ]);
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Base Paths (MUST BE FIRST)
 |--------------------------------------------------------------------------
 */
 $basePath = realpath(__DIR__ . '/..');
@@ -77,8 +91,6 @@ Then retry.
     }
 }
 
-$phpBin = '/usr/bin/php8.2'; // PHP 8.2 binary
-
 /*
 |--------------------------------------------------------------------------
 | Current Step
@@ -132,6 +144,7 @@ try {
 
     switch ($step) {
 
+        // CHECK
         case 'check':
             @unlink($envFile);
             @unlink($dbConfigFile);
@@ -141,11 +154,19 @@ try {
             $msg = "<strong>Checking system requirements...</strong><br>";
             $ok = true;
 
-            // PHP 8.2.x check
-            if (version_compare(PHP_VERSION, '8.2.0', '>=') && version_compare(PHP_VERSION, '8.3.0', '<')) {
-                $msg .= "✔ PHP " . PHP_VERSION . " OK (8.2.x)<br>";
+            // PHP version check
+            global $phpBin;
+            $phpVersionOutput = trim(shell_exec("$phpBin -v 2>&1"));
+            if ($phpVersionOutput && preg_match('/PHP\s+([0-9\.]+)/i', $phpVersionOutput, $m)) {
+                $version = $m[1];
+                if (version_compare($version, '8.2.0', '>=') && version_compare($version, '8.3.0', '<')) {
+                    $msg .= "✔ PHP $version OK (8.2.x)<br>";
+                } else {
+                    $msg .= "❌ PHP 8.2.x required, found $version<br>";
+                    $ok = false;
+                }
             } else {
-                $msg .= "❌ PHP 8.2.x required, current: " . PHP_VERSION . "<br>";
+                $msg .= "❌ PHP 8.2 binary not found at $phpBin<br>";
                 $ok = false;
             }
 
@@ -165,9 +186,7 @@ try {
                 $msg .= "✔ $composerVersion<br>";
             }
 
-            if (!$ok) {
-                fail($msg . "<br>Fix errors and reload");
-            }
+            if (!$ok) fail($msg . "<br>Fix errors and reload");
 
             echo json_encode([
                 'success' => true,
@@ -176,6 +195,7 @@ try {
             ]);
             exit;
 
+        // COMPOSER
         case 'composer':
             if (!is_writable($basePath)) {
                 fail("
@@ -205,6 +225,7 @@ sudo chmod -R 775 $basePath
             ]);
             exit;
 
+        // DB CONFIG
         case 'db_config':
             echo json_encode([
                 'message' => 'Please enter database info',
@@ -213,9 +234,9 @@ sudo chmod -R 775 $basePath
             ]);
             exit;
 
+        // ENV
         case 'env':
             if (!file_exists($dbConfigFile)) fail("DB config missing");
-
             $config = json_decode(file_get_contents($dbConfigFile), true);
 
             if (!file_exists($basePath . '/.env.example')) fail(".env.example not found");
@@ -246,8 +267,10 @@ sudo chmod 664 $envFile
             ]);
             exit;
 
+        // KEY
         case 'key':
             blockIfNoVendor($basePath);
+            global $phpBin;
             exec("$phpBin \"$basePath/artisan\" key:generate --force 2>&1", $out, $ret);
             if ($ret !== 0) fail(implode("\n", $out));
 
@@ -257,46 +280,67 @@ sudo chmod 664 $envFile
             ]);
             exit;
 
+        // MIGRATE
         case 'migrate':
             blockIfNoVendor($basePath);
+            global $phpBin;
             exec("$phpBin \"$basePath/artisan\" migrate --force 2>&1", $out, $ret);
             if ($ret !== 0) fail(implode("\n", $out));
-
             file_put_contents($migrationDoneFile, 'done');
-            echo json_encode(['message' => '✔ Migrations completed','next'=>'seed']);
+
+            echo json_encode([
+                'message' => '✔ Migrations completed',
+                'next' => 'seed'
+            ]);
             exit;
 
+        // SEED
         case 'seed':
             blockIfNoVendor($basePath);
+            global $phpBin;
             exec("$phpBin \"$basePath/artisan\" db:seed --force 2>&1", $out, $ret);
             if ($ret !== 0) fail(implode("\n", $out));
-
             file_put_contents($seedDoneFile, 'done');
-            echo json_encode(['message'=>'✔ Database seeded','next'=>'permissions']);
+
+            echo json_encode([
+                'message' => '✔ Database seeded',
+                'next' => 'permissions'
+            ]);
             exit;
 
+        // PERMISSIONS
         case 'permissions':
-            foreach (['storage','bootstrap/cache'] as $dir) {
+            foreach (['storage', 'bootstrap/cache'] as $dir) {
                 if (!is_writable("$basePath/$dir")) fail("$dir is not writable");
             }
-            echo json_encode(['message'=>'✔ Permissions OK','next'=>'finish']);
+
+            echo json_encode([
+                'message' => '✔ Permissions OK',
+                'next' => 'finish'
+            ]);
             exit;
 
+        // FINISH
         case 'finish':
             file_put_contents($installedFlag, 'installed');
 
             $env = file_get_contents($envFile);
-            if (!str_contains($env,'APP_INSTALLED=true')) {
+            if (!str_contains($env, 'APP_INSTALLED=') || !str_contains($env, 'APP_INSTALLED=false')) {
                 $env .= "\nAPP_INSTALLED=true\n";
-                file_put_contents($envFile,$env);
+                file_put_contents($envFile, $env);
             }
 
-            echo json_encode(['message'=>"✔ Installation complete! <a href='/'>Open Application</a>",'next'=>null]);
+            $env .= "\nAPP_INSTALLED=true\n";
+            file_put_contents($envFile, $env);
+
+            echo json_encode([
+                'message' => "✔ Installation complete! <a href='/'>Open Application</a>",
+                'next' => null
+            ]);
             exit;
 
         default:
             fail("Invalid step");
-
     }
 
 } catch (Throwable $e) {
