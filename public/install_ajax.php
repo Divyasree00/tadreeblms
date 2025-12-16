@@ -69,11 +69,27 @@ function blockIfNoVendor($basePath)
 | PHP & Composer Binaries
 |--------------------------------------------------------------------------
 */
-$phpBin = trim(shell_exec('which php8.2'));  // <-- ensure PHP 8.2 is installed
+
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    $phpBin = trim(shell_exec('where php'));
+} else {
+    $phpBin = trim(shell_exec('which php'));
+}
+
 if (!$phpBin) fail("PHP 8.2 CLI not found. Please install php8.2-cli");
 
-$composerBin = '/usr/local/bin/composer'; // adjust if composer 2.7 is installed elsewhere
-if (!file_exists($composerBin)) fail("Composer not found at $composerBin");
+//$composerBin = '/usr/local/bin/composer';
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    $composerBin = trim(shell_exec('composer --version 2>&1'));
+    if ($composerBin === '') {
+        fail("Composer is not installed or not available in PATH.");
+    }
+} else {
+    $composerBin = '/usr/local/bin/composer';
+    if (!file_exists($composerBin)) fail("Composer not found at $composerBin");
+}
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -151,13 +167,35 @@ try {
                 }
             }
 
-            // Composer version
-            $composerVersion = trim(shell_exec("$phpBin $composerBin --version 2>&1"));
-            if (strpos($composerVersion, '2.7.8') !== false) {
-                $msg .= "✔ Composer $composerVersion OK<br>";
+            // Composer 
+
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $composerOutput = trim(shell_exec('composer --version 2>&1'));
+
+                if ($composerOutput === '') {
+                    $msg .= "❌ Composer not found or not available in PATH<br>";
+                    $ok = false;
+                } elseif (preg_match('/Composer version ([0-9.]+)/', $composerOutput, $m)) {
+
+                    if (version_compare($m[1], '2.7.8', '>=')) {
+                        $msg .= "✔ Composer {$m[1]} OK<br>";
+                    } else {
+                        $msg .= "❌ Composer 2.7.8+ required, found {$m[1]}<br>";
+                        $ok = false;
+                    }
+                } else {
+                    $msg .= "❌ Unable to detect Composer version<br>";
+                    $ok = false;
+                }
             } else {
-                $msg .= "❌ Composer 2.7 required, found $composerVersion<br>";
-                $ok = false;
+
+                $composerVersion = trim(shell_exec("$phpBin $composerBin --version 2>&1"));
+                if (strpos($composerVersion, '2.7.8') !== false) {
+                    $msg .= "✔ Composer $composerVersion OK<br>";
+                } else {
+                    $msg .= "❌ Composer 2.7 required, found $composerVersion<br>";
+                    $ok = false;
+                }
             }
 
             if (!$ok) fail($msg . "<br>Fix errors and reload");
@@ -170,12 +208,23 @@ try {
         */
         case 'composer':
             if (!is_writable($basePath)) {
-                fail("Permission issue. Run:<br><pre>sudo chown -R \$USER:www-data $basePath\nsudo chmod -R 775 $basePath</pre>");
+                if (stripos(PHP_OS, 'WIN') === 0) {
+                    fail("Permission issue. Please ensure the project folder is writable (Windows user permissions).");
+                } else {
+                    fail("Permission issue. Run:<br><pre>sudo chown -R \$USER:www-data $basePath\nsudo chmod -R 775 $basePath</pre>");
+                }
             }
 
-            // Use PHP 8.2 + Composer 2.7 with HOME and COMPOSER_HOME
-            $cmd = "cd \"$basePath\" && COMPOSER_HOME=/tmp HOME=/tmp $phpBin $composerBin install --no-interaction --prefer-dist 2>&1";
+            if (stripos(PHP_OS, 'WIN') === 0) {
+                // Windows
+                $cmd = "cd /d \"$basePath\" && composer install --no-interaction --prefer-dist 2>&1";
+            } else {
+                // Linux / macOS
+                $cmd = "cd \"$basePath\" && COMPOSER_HOME=/tmp HOME=/tmp composer install --no-interaction --prefer-dist 2>&1";
+            }
+
             $output = shell_exec($cmd);
+
 
             if (!vendorExists($basePath)) {
                 fail("Composer failed:<br><pre>$output</pre>");
