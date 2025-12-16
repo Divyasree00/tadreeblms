@@ -1,127 +1,58 @@
-
+[README_TadreebLMS_UPDATED.md](https://github.com/user-attachments/files/24185613/README_TadreebLMS_UPDATED.md)
 # 🚀 TadreebLMS
 
 TadreebLMS is a modern, open-source **Learning Management System (LMS)** built to support educational institutions, training organizations, and professional development programs. It enables seamless delivery of digital learning through structured courses, assessments, progress tracking, and certification.
 
-Our organization is dedicated to developing future leaders through innovative and impactful education. We aim to equip students, professionals, and leaders with essential knowledge, skills, and strategic thinking to excel in a dynamic global environment.
+**Our commitment is to develop future-ready leaders through advanced and innovative learning frameworks. We empower students, professionals, and executives with the strategic knowledge and adaptable skills essential for success in today’s fast-changing environment.**
 
 ---
 
 ## 🌍 About TadreebLMS
 
-TadreebLMS is designed to be **flexible, scalable, and customizable**, making it suitable for a wide range of learning use cases such as:
+TadreebLMS is designed to be **flexible, scalable, and customizable**, making it suitable for:
 
-- Academic learning
-- Corporate and professional training
-- Skill development programs
-- Online and blended learning environments
+- Academic learning  
+- Corporate & professional training  
+- Skill development programs  
+- Online & blended learning  
 
-As an **open-source platform**, TadreebLMS allows organizations to fully control their learning infrastructure, adapt workflows, and extend functionality as needed.
+As an **open-source platform**, TadreebLMS gives organizations full control over their learning infrastructure.
 
 ---
 
 ## 📚 Key Features
 
-### 👥 User & Role Management
-- Student registration and enrollment
-- Instructor onboarding and management
-- Admin-level platform control
-- Role-based access permissions
-
-### 🎓 Course Management
-- Create, organize, and manage courses
-- Categorize courses by subject or skill area
-- Assign courses to users or groups
-- Track course completion percentage
-
-### 📝 Assessments & Evaluation
-- Quizzes and evaluations linked to courses
-- Manual and automatic grading
-- Learner performance tracking
-
-### 📊 Progress & Reporting
-- Individual learner dashboards
-- Course progress and completion insights
-- Instructor and admin-level reports
-
-### 🏅 Certificates
-- Automatic certificate generation upon course completion
-- Downloadable and shareable certificates
-- Customizable certificate templates
-- Optional certificate verification support
-
-### 📚 Learning Resources
-- Resource libraries for supplementary materials
-- Upload and manage documents and learning assets
-
-### 🌐 Platform Capabilities
-- Multi-language support (English, Arabic)
-- Responsive and mobile-friendly design
-- Secure authentication system
-- Cloud or on-premise deployment
+- User & Role Management (Admin, Instructor, Learner)  
+- Course & Enrollment Management  
+- Assessments & Evaluations  
+- Progress Tracking & Reports  
+- Certificate Generation  
+- Resource Library  
+- Multi-language Support (English, Arabic)  
+- Responsive & Secure Design  
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠 Technology Stack
 
-- **Backend:** PHP / Laravel
-- **Frontend:** HTML, CSS, JavaScript
-- **Database:** MySQL / PostgreSQL
-- **Authentication:** Role-based access control
-- **Deployment:** Cloud | On-Premise
-
----
-
-## 👤 User Roles
-
-| Role | Description |
-|-----|------------|
-| Admin | Full platform management |
-| Instructor | Course creation and learner evaluation |
-| Learner | Course participation and certification |
-
----
-
-## 🤝 Contributing
-
-Community contributions are welcome.
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Submit a pull request
-
----
-
-## 📄 License
-
-TadreebLMS is licensed under the **GNU Affero General Public License (AGPL)**.
-
-This license ensures that:
-- Any modifications must remain open source
-- Network deployments must provide access to source code
-- Community benefits from shared improvements
-
-See the `LICENSE` file for full details.
-
----
-
-## ⭐ Support TadreebLMS
-
-If you find TadreebLMS useful, please give the project a ⭐ on GitHub and consider contributing.
+- **Backend:** PHP / Laravel  
+- **Frontend:** HTML, CSS, JavaScript  
+- **Database:** MySQL  
+- **Web Server:** Apache  
+- **License:** GNU AGPLv3  
 
 ---
 
 # 📦 Installation Guide
 
-> **Server Requirement:** Ubuntu 20.04 / 22.04  
-> **Web Server:** Apache  
-> **PHP Version:** 8.2+  
-> **Node / Redis:** Not required
+> **Recommended OS:** Ubuntu 20.04 / 22.04  
+> **Web Server:** Apache 2.x  
+> **PHP Version:** 8.2  
+> **Composer Version (Required):** 2.7.8  
 
 ---
 
-## 1️⃣ Server Update
+## 1️⃣ Update Server
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -139,7 +70,7 @@ sudo systemctl start apache2
 
 ---
 
-## 3️⃣ Install PHP & Required Extensions
+## 3️⃣ Install PHP 8.2
 
 ```bash
 sudo apt install software-properties-common -y
@@ -148,7 +79,7 @@ sudo apt update
 ```
 
 ```bash
-sudo apt install php8.2 php8.2-cli php8.2-common php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-mysql php8.2-bcmath -y
+sudo apt install php8.2 php8.2-cli php8.2-common php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-mysql php8.2-bcmath php8.2-gd -y
 ```
 
 ---
@@ -158,17 +89,14 @@ sudo apt install php8.2 php8.2-cli php8.2-common php8.2-mbstring php8.2-xml php8
 ```bash
 cd /tmp
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php composer-setup.php
+php composer-setup.php --version=2.7.8
 sudo mv composer.phar /usr/local/bin/composer
-```
-
-```bash
 composer --version
 ```
 
 ---
 
-## 5️⃣ Clone TadreebLMS Repository
+## 5️⃣ Clone TadreebLMS
 
 ```bash
 cd /var/www
@@ -176,35 +104,57 @@ sudo git clone https://github.com/Tadreeb-LMS/tadreeblms.git
 ```
 
 ```bash
-cd tadreeblms
-sudo composer install
-```
-
----
-
-## 6️⃣ Environment Configuration
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-> ✅ **Database will be created from the UI during admin onboarding (similar to Perfex CRM)**
-
-Update database credentials in `.env` if required.
-
----
-
-## 7️⃣ Set Permissions
-
-```bash
 sudo chown -R www-data:www-data /var/www/tadreeblms
-sudo chmod -R 775 storage bootstrap/cache
+sudo find /var/www/tadreeblms -type d -exec chmod 755 {} \;
+sudo find /var/www/tadreeblms -type f -exec chmod 644 {} \;
+```
+
+```bash
+cd tadreeblms
 ```
 
 ---
 
-## 8️⃣ Apache Virtual Host Configuration
+## 6️⃣ Setup Storage & Cache (Safe Copy)
+
+```bash
+sudo mkdir -p bootstrap/cache
+
+sudo mkdir -p storage/framework/views
+sudo mkdir -p storage/framework/cache/data
+sudo mkdir -p storage/framework/sessions
+sudo mkdir -p storage/logs
+
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
+sudo chown -R www-data:www-data public
+sudo chmod -R 775 public
+```
+
+---
+
+## 7️⃣ Install & Configure MySQL
+
+```bash
+sudo apt install mysql-server -y
+```
+
+```bash
+sudo mysql
+```
+
+```sql
+CREATE DATABASE laravel_db;
+CREATE USER 'laravel'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON laravel_db.* TO 'laravel'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+---
+
+## 8️⃣ Apache Virtual Host
 
 ```bash
 sudo nano /etc/apache2/sites-available/tadreeblms.conf
@@ -212,10 +162,10 @@ sudo nano /etc/apache2/sites-available/tadreeblms.conf
 
 ```apache
 <VirtualHost *:80>
-    ServerName your-domain.com
+    ServerName YOUR_SERVER_IP
     DocumentRoot /var/www/tadreeblms/public
 
-    <Directory /var/www/tadreeblms>
+    <Directory /var/www/tadreeblms/public>
         AllowOverride All
         Require all granted
     </Directory>
@@ -226,23 +176,25 @@ sudo nano /etc/apache2/sites-available/tadreeblms.conf
 ```
 
 ```bash
-sudo a2ensite tadreeblms
 sudo a2enmod rewrite
-sudo systemctl restart apache2
+sudo a2ensite tadreeblms.conf
+sudo systemctl reload apache2
 ```
 
 ---
 
 ## 9️⃣ Access Application
 
-Open your browser:
+Open in browser:
 
 ```
-http://your-domain.com
+http://YOUR_SERVER_IP
 ```
 
-Complete **admin onboarding** via UI.
+Complete the web-based onboarding to finish setup.
 
 ---
 
-✅ TadreebLMS is now installed and ready to use!
+## 📄 License
+
+Licensed under the **GNU Affero General Public License (AGPLv3)**.
