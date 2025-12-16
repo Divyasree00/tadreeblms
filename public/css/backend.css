@@ -42,7 +42,7 @@
   --gray: #73818f;
   --gray-dark: #2f353a;
   --light-blue: #63c2de;
-  --primary: #3c4085;
+  --primary: #c1902d;
   --primary1: #20a8d8;
 
   --secondary: #c8ced3;
@@ -4819,7 +4819,7 @@ input[type="button"].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #5c6873;
-  background-color: #e4e5e6;
+ background-color: rgb(35 62 116) !important;
   border-color: #c8ced3 #c8ced3 #e4e5e6;
 }
 
@@ -14427,7 +14427,7 @@ a.dt-button:hover:not(.disabled) {
   width: 1.09375rem;
   margin: 0 0.5rem 0 0;
   font-size: 0.875rem;
-  color: #73818f;
+  color: #c1902d;
   text-align: center;
 }
 
@@ -23365,7 +23365,7 @@ div.dt-buttons {
 .nav-link.active{border-radius: 0 !important;    background-color: rgb(134 138 180) !important; color: #fff !important;}
 .nav-link{position: relative;}
 .nav-link.active i{color: #fff !important;}
-.sidebar .nav-title{    background: #cfe9af; color: #000;}
+.sidebar .nav-title{    background: #d9d4ca; color: #000;}
 .nav-link.active:after{width: 0;
     content: "";
     position: absolute;
@@ -23541,7 +23541,7 @@ table.dataTable thead th {
     #myTable .svg-inline--fa.fa-folder-open.fa-w-18{font-size: inherit !important;}
     #myTable .svg-inline--fa.fa-plus-circle.fa-w-16{font-size: 15px !important;}
     #myTable .svg-inline--fa.fa-plus-square.fa-w-14{font-size: 14px !important;}
-.avg-card-head {background: linear-gradient(45deg, rgb(30 42 201 / 36%), rgb(137 235 21 / 48%));
+.avg-card-head {    background: linear-gradient(45deg, rgb(35 62 116), rgb(193 144 45));
     color: #fff;}
 .leftBorder4, .leftBorder1, .leftBorder2, .leftBorder3{ border:none !important;}
 .avg-card-head h5{ margin:0; color: #fff;}
@@ -23577,3 +23577,4 @@ td .dropdown-menu.show .btn-danger{ color: #f70000 !important;}
 
 td .dropdown-menu.show a{ width:auto !important;}}
 td .dropdown-menu.show a:hover{background:none !important}
+.adminlogo{ max-width: 150px;}
