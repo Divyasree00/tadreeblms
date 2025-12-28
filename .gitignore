@@ -6,7 +6,7 @@
 /node_modules/
 
 .composer/
-
+/installed
 README.md
 .env
 .env.*
