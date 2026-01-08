@@ -45,6 +45,10 @@ As an **open-source platform**, TadreebLMS gives organizations full control over
 
 # 📦 Installation Guide
 
+# For windows kindly refer to this document : https://tadreeblms.com/docs/installation
+
+# For ubuntu follow the below steps:
+
 > **Recommended OS:** Ubuntu 20.04 / 22.04  
 > **Web Server:** Apache 2.x  
 > **PHP Version:** 8.2  
