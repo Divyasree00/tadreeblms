@@ -144,7 +144,7 @@ class LoginController extends Controller
 
             return response([
                 'success' => false,
-                'message' => 'Login failed. Account not found'
+                'message' => 'Invalid email or password'
             ], Response::HTTP_FORBIDDEN);
         }
 
