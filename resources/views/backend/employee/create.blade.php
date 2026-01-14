@@ -64,25 +64,7 @@
                                placeholder="{{ __('labels.backend.teachers.fields.last_name') }}" required>
                     </div>
 
-                    <!-- Arabic First Name -->
-                    <div class="col-lg-6 col-sm-12 mt-3">
-                        <label class="form-control-label" for="arabic_first_name">
-                            First Name in Arabic
-                        </label>
-                        <input type="text" name="arabic_first_name" id="arabic_first_name"
-                               class="form-control" maxlength="191"
-                               placeholder="First Name In Arabic" required>
-                    </div>
-
-                    <!-- Arabic Last Name -->
-                    <div class="col-lg-6 col-sm-12 mt-3">
-                        <label class="form-control-label" for="arabic_last_name">
-                            Last Name in Arabic
-                        </label>
-                        <input type="text" name="arabic_last_name" id="arabic_last_name"
-                               class="form-control" maxlength="191"
-                               placeholder="Last Name In Arabic" required>
-                    </div>
+                    
 
                     <!-- Employee ID -->
                     <div class="col-lg-6 col-sm-12 mt-3">

@@ -68,34 +68,9 @@
     </div><!--col-->
 </div><!--row-->
 
-<div class="row">
-    <div class="col">
-        <div class="form-group">
-            {{ html()->label(__('First Name In Arabic'))->for('arabic_first_name') }}
+{{-- Language-specific name fields removed.
+     Name localization is handled globally via i18n --}}
 
-            {{ html()->text('arabic_first_name')
-                ->class('form-control')
-                ->placeholder(__('First Name In Arabic'))
-                ->attribute('maxlength', 191)
-                ->required()
-                ->autofocus() }}
-        </div><!--form-group-->
-    </div><!--col-->
-</div><!--row-->
-<div class="row">
-    <div class="col">
-        <div class="form-group">
-            {{ html()->label(__('Last Name In Arabic'))->for('arabic_last_name') }}
-
-            {{ html()->text('arabic_last_name')
-                ->class('form-control')
-                ->placeholder(__('Last Name In Arabic'))
-                ->attribute('maxlength', 191)
-                ->required()
-                ->autofocus() }}
-        </div><!--form-group-->
-    </div><!--col-->
-</div><!--row-->
 @if($logged_in_user->hasRole('teacher'))
     @php
         $teacherProfile = $logged_in_user->teacherProfile?:'';
