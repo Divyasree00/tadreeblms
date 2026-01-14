@@ -32,7 +32,20 @@ class LoginController extends Controller
             return '/admin/dashboard';
         }
 
+        
+
         return route(home_route());
+    }
+
+    public function refresh_captcha() {
+        $a = rand(1, 9);
+        $b = rand(1, 9);
+
+        session(['captcha_answer' => $a + $b]);
+
+        return response()->json([
+            'captcha_question' => "$a + $b = ?",
+        ]);
     }
 
     /**
@@ -40,21 +53,16 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $a = rand(1, 9);
-        $b = rand(1, 9);
-
-        Session::put('captcha_answer', $a + $b);
+       
 
         if (request()->ajax()) {
             return [
                 'socialLinks' => (new Socialite)->getSocialLinks(),
-                'captcha_question' => "$a + $b = ?",
             ];
         }
 
         return redirect('/')->with([
             'show_login' => true,
-            'captcha_question' => "$a + $b = ?",
         ]);
     }
 
@@ -101,7 +109,20 @@ class LoginController extends Controller
         $credentials = $request->only($this->username(), 'password');
 
         if (LaravelAuth::attempt($credentials, $request->has('remember'))) {
-            return $this->sendLoginResponse($request);
+            $user = auth()->user();
+
+            if ($user->hasRole('administrator')) {
+                $redirect = route('admin.dashboard');
+                 
+            } else {
+                $redirect = route('home');
+                
+            }
+
+           return response([
+                    'success' => true,
+                    'redirect' => $redirect,
+            ], Response::HTTP_OK);
         }
 
         return response([

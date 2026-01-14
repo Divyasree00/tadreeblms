@@ -141,6 +141,9 @@ Route::group(['middleware' => 'permission:trainer_access'], function () {
 
     Route::post('settings/general', ['uses' => 'Admin\ConfigController@saveGeneralSettings'])->name('general-settings');
 
+    
+    Route::get('settings/landing-page-setting', ['uses' => 'Admin\ConfigController@getLandingPageSettings', 'as' => 'landing-page-setting']);
+
     Route::post('settings/contact', ['uses' => 'Admin\ConfigController@saveGeneralSettings'])->name('general-contact');
 
     Route::get('settings/social', ['uses' => 'Admin\ConfigController@getSocialSettings'])->name('social-settings');

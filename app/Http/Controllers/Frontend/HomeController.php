@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Helpers\CustomHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
 use App\Models\Blog;
@@ -54,10 +55,11 @@ class HomeController extends Controller
     }
 
 
+    
 
     public function index()
     {
-        
+        CustomHelper::redirect_based_on_setting();
         if (request('page')) {
             $page = \DB::table('pages')->where('slug', '=', request('page'))
                 ->where('published', '=', 1)->first();

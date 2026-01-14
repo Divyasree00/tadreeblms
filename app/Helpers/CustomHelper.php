@@ -20,6 +20,13 @@ use Intervention\Image\Facades\Image;
 class CustomHelper
 {
 
+    public static function redirect_based_on_setting()
+    {
+        //dd("redirect based on setting");
+        return true;
+    }
+
+
     public static function isCourseAlreadyCompleted($user_id, $course_id)
     {
         return SubscribeCourse::query()
