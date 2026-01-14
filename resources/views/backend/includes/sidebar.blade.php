@@ -182,13 +182,13 @@
             @endif
             @if (null == Session::get('setvaluesession') ||
             (null !== Session::get('setvaluesession') && in_array(Session::get('setvaluesession'), [1,2,3])))
-            <li class="nav-item ">
+            {{-- <li class="nav-item ">
                 <a class="nav-link {{ $request->segment(2) == 'manual-assessments' ? 'active' : '' }}"
                     href="{{ route('admin.manual-assessments.index') }}">
                     <i class="nav-icon fas fa-folder"></i>
                     <span class="title">@lang('menus.backend.sidebar.Manual-Assessment')</span>
                 </a>
-            </li>
+            </li> --}}
             @endif
             @endcan
             @if (true)
