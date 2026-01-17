@@ -52,6 +52,18 @@ class LoginController extends Controller
             'captcha_question' => "$a + $b = ?"
         ]);
     }
+    public function refreshCaptcha()
+    {
+        $a = rand(1, 9);
+        $b = rand(1, 9);
+
+        Session::put('captcha_answer', $a + $b);
+
+        return response()->json([
+            'captcha_question' => "$a + $b = ?"
+        ]);
+    }
+
 
     /**
      * Get login username field
@@ -159,7 +171,7 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if (! $user->isConfirmed()) {
+        if (!$user->isConfirmed()) {
             auth()->logout();
 
             if ($user->isPending()) {
@@ -174,7 +186,7 @@ class LoginController extends Controller
                     )
                 ])
             );
-        } elseif (! $user->isActive()) {
+        } elseif (!$user->isActive()) {
             auth()->logout();
             throw new GeneralException(__('exceptions.frontend.auth.deactivated'));
         }

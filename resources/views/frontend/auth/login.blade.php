@@ -1,4 +1,4 @@
-@extends('frontend.layouts.app'.config('theme_layout'))
+@extends('frontend.layouts.app' . config('theme_layout'))
 
 @section('title', app_name() . ' | ' . __('labels.frontend.auth.login_box_title'))
 
@@ -14,67 +14,76 @@
 
                 <div class="card-body">
                     {{ html()->form('POST', route('frontend.auth.login.post'))->open() }}
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    {{ html()->label(__('validation.attributes.frontend.email'))->for('email') }}
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                {{ html()->label(__('validation.attributes.frontend.email'))->for('email') }}
 
-                                    {{ html()->email('email')
-                                        ->class('form-control')
-                                        ->placeholder(__('validation.attributes.frontend.email'))
-                                        ->attribute('maxlength', 191)
-                                        ->required() }}
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
+                                {{ html()->email('email')
+        ->class('form-control')
+        ->placeholder(__('validation.attributes.frontend.email'))
+        ->attribute('maxlength', 191)
+        ->required() }}
+                            </div><!--form-group-->
+                        </div><!--col-->
+                    </div><!--row-->
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    {{ html()->label(__('validation.attributes.frontend.password'))->for('password') }}
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                {{ html()->label(__('validation.attributes.frontend.password'))->for('password') }}
 
-                                    {{ html()->password('password')
-                                        ->class('form-control')
-                                        ->placeholder(__('validation.attributes.frontend.password'))
-                                        ->required() }}
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
+                                {{ html()->password('password')
+        ->class('form-control')
+        ->placeholder(__('validation.attributes.frontend.password'))
+        ->required() }}
+                            </div><!--form-group-->
+                        </div><!--col-->
+                    </div><!--row-->
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        {{ html()->label(html()->checkbox('remember', true, 1) . ' ' . __('labels.frontend.auth.remember_me'))->for('remember') }}
-                                    </div>
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
-                        
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>Captcha: {{ session('captcha_question') }}</label>
-                                    <input type="text" name="captcha" class="form-control" required>
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    {{ html()->label(html()->checkbox('remember', true, 1) . ' ' . __('labels.frontend.auth.remember_me'))->for('remember') }}
+                                </div>
+                            </div><!--form-group-->
+                        </div><!--col-->
+                    </div><!--row-->
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group clearfix">
-                                    {{ form_submit(__('labels.frontend.auth.login_button')) }}
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
+                    <div class="form-group">
+                        <label>
+                            Captcha:
+                            <span id="captcha-question">
+                                {{ session('captcha_question') }}
+                            </span>
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group text-right">
-                                    <a href="{{ route('frontend.auth.password.reset') }}">@lang('labels.frontend.passwords.forgot_password')</a>
-                                </div><!--form-group-->
-                            </div><!--col-->
-                        </div><!--row-->
+                            <button type="button" id="refresh-captcha" title="Reload captcha"
+                                style="border:none;background:none;cursor:pointer;">
+                                🔄
+                            </button>
+                        </label>
+
+                        <input type="text" name="captcha" id="captcha-input" class="form-control" required>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group clearfix">
+                                {{ form_submit(__('labels.frontend.auth.login_button')) }}
+                            </div><!--form-group-->
+                        </div><!--col-->
+                    </div><!--row-->
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group text-right">
+                                <a
+                                    href="{{ route('frontend.auth.password.reset') }}">@lang('labels.frontend.passwords.forgot_password')</a>
+                            </div><!--form-group-->
+                        </div><!--col-->
+                    </div><!--row-->
                     {{ html()->form()->close() }}
 
                     <div class="row">
@@ -89,3 +98,13 @@
         </div><!-- col-md-8 -->
     </div><!-- row -->
 @endsection
+<script>
+document.getElementById('refresh-captcha').addEventListener('click', function () {
+    fetch("{{ route('refresh.captcha') }}")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('captcha-question').innerText = data.captcha_question;
+            document.getElementById('captcha-input').value = '';
+        });
+});
+</script>
