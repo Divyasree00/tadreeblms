@@ -15,6 +15,30 @@
     width: 20px;
     height: 20px;
 }
+
+/* Column visibility dropdown checkbox styles */
+.dt-button-collection .dt-button {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.dt-button-collection .dt-button:hover {
+    background: #f5f5f5 !important;
+}
+
+.dt-button-collection .dt-button label {
+    cursor: pointer;
+    display: block;
+    padding: 8px 12px;
+    margin: 0;
+    width: 100%;
+    user-select: none;
+}
+
+.dt-button-collection .dt-button input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
 </style>
 @endpush
 
@@ -121,7 +145,8 @@ $(function () {
             },
             {
                 extend: 'colvis',
-                text: '<i class="fa fa-eye"></i>'
+                text: '<i class="fa fa-eye"></i>',
+                columns: ':not(:first-child)'
             }
         ],
 
@@ -150,7 +175,64 @@ $(function () {
                 targets: -1,
                 className: 'text-center'
             }
-        ]
+        ],
+                 initComplete: function () {
+                     let $searchInput = $('#myTable_filter input[type="search"]');
+    $searchInput
+        .addClass('custom-search')
+        .wrap('<div class="search-wrapper position-relative d-inline-block"></div>')
+        .after('<i class="fa fa-search search-icon"></i>');
+
+    $('#myTable_length select').addClass('form-select form-select-sm custom-entries');
+                },
+
+                createdRow: function (row, data, dataIndex) {
+                    $(row).attr('data-entry-id', data.id);
+                },
+                language:{
+                    url : "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/{{$locale_full_name}}.json",
+                    buttons :{
+                        colvis : '{{trans("datatable.colvis")}}',
+                        pdf : '{{trans("datatable.pdf")}}',
+                        csv : '{{trans("datatable.csv")}}',
+                    },
+                    search:"",
+    //                  paginate: {
+    //     previous: '<i class="fa fa-angle-left"></i>',
+    //     next: '<i class="fa fa-angle-right"></i>'
+    // },
+                }
+
+            });
+            @if(auth()->user()->isAdmin())
+            $('.actions').html('<a href="' + '{{ route('admin.teachers.mass_destroy') }}' + '" class="btn btn-xs btn-danger js-delete-selected" style="margin-top:0.755em;margin-left: 20px;">Delete selected</a>');
+            @endif
+
+    // Add checkboxes to column visibility dropdown
+    table.on('buttons-action', function (e, buttonApi, dataTable, node, config) {
+        if (config.extend === 'colvis') {
+            setTimeout(function() {
+                $('.dt-button-collection .dt-button').each(function() {
+                    var $button = $(this);
+                    var text = $button.text().trim();
+                    var columnIdx = $button.attr('data-cv-idx');
+                    
+                    if (columnIdx !== undefined) {
+                        var column = table.column(columnIdx);
+                        var isVisible = column.visible();
+                        
+                        $button.html(
+                            '<label style="cursor: pointer; display: block; padding: 5px 10px; margin: 0;">' +
+                            '<input type="checkbox" style="margin-right: 8px;" ' + (isVisible ? 'checked' : '') + '> ' +
+                            text +
+                            '</label>'
+                        );
+                    }
+                });
+            }, 0);
+        }
+    });
+
     });
 
     // Status switch

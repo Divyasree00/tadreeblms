@@ -180,6 +180,7 @@ return array(
         'general' => 'عام',
         'social-login' => 'تسجيل الدخول الاجتماعي',
         'title' => 'الإعدادات',
+        'landing_page_setting' => 'إعدادات الصفحة المقصودة',
       ),
       'site-management' =>
       array(

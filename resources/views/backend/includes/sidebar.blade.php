@@ -182,13 +182,13 @@
             @endif
             @if (null == Session::get('setvaluesession') ||
             (null !== Session::get('setvaluesession') && in_array(Session::get('setvaluesession'), [1,2,3])))
-            <li class="nav-item ">
+            {{-- <li class="nav-item ">
                 <a class="nav-link {{ $request->segment(2) == 'manual-assessments' ? 'active' : '' }}"
                     href="{{ route('admin.manual-assessments.index') }}">
                     <i class="nav-icon fas fa-folder"></i>
                     <span class="title">@lang('menus.backend.sidebar.Manual-Assessment')</span>
                 </a>
-            </li>
+            </li> --}}
             @endif
             @endcan
             @if (true)
@@ -692,25 +692,32 @@
                     </li>
 
                     <li class="nav-item ">
+                        <a class="nav-link {{ active_class(Active::checkUriPattern('admin/landing-page-setting')) }}"
+                            href="{{ route('admin.landing-page-setting') }}">
+                            <span class="title">@lang('menus.backend.sidebar.settings.landing_page_setting')</span>
+                        </a>
+                    </li>
+
+                    {{-- <li class="nav-item ">
                         <a class="nav-link {{ $request->segment(2) == 'footer' ? 'active' : '' }}"
                             href="{{ route('admin.footer-settings') }}">
                             <span class="title">@lang('menus.backend.sidebar.footer.title')</span>
                         </a>
-                    </li>
+                    </li> --}}
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link {{ active_class(Active::checkUriPattern('admin/menu-manager')) }}"
                             href="{{ route('admin.menu-manager') }}">
                             {{ __('menus.backend.sidebar.menu-manager.title') }}</a>
-                    </li>
+                    </li> --}}
 
 
-                    <li class="nav-item ">
+                    {{-- <li class="nav-item ">
                         <a class="nav-link {{ active_class(Active::checkUriPattern('admin/sliders*')) }}"
                             href="{{ route('admin.sliders.index') }}">
                             <span class="title">@lang('menus.backend.sidebar.hero-slider.title')</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                 </ul>
             </li>

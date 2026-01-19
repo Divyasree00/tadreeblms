@@ -18,9 +18,9 @@ use Illuminate\Http\Request;
 //Route::post('/install/run', [InstallerController::class, 'run']);
 
 use App\Http\Controllers\Backend\MenuController;
+use App\Http\Controllers\Frontend\Auth\LoginController;
 
-Route::post('/hupdateitem', [MenuController::class, 'updateitem'])
-    ->name('hupdateitem');
+Route::get('/refresh-captcha/{mode?}',[LoginController::class,'refresh_captcha'])->name('refresh_captcha');
 
 Route::get('syncCourseAssignmentAndSubscribeCourseData', function () {
     CustomHelper::syncCourseAssignmentAndSubscribeCourseData();
@@ -32,6 +32,7 @@ Route::get('complete-course/{course_id}/{user_id}', function (Request $request) 
 // Route::get('loginById/{user_id}', function (Request $request) {
 //     Auth::loginUsingId($request->user_id);
 // });
+
 
 Route::get('email-test', function () {
     $details['email'] = 'anupdeveloper07@gmail.com';

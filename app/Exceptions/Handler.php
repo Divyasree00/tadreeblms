@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Throwable;
 use ErrorException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -46,6 +47,25 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+        /* ✅ CSRF TOKEN MISMATCH (419) */
+        if ($exception instanceof TokenMismatchException) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Your session has expired. Please refresh the page and try again.'
+                ], 419);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput($request->except('_token'))
+                ->withErrors([
+                    'session' => 'Your session expired. Please refresh the page and try again.'
+                ]);
+        }
+
+        /* ✅ PERMISSION ERROR */
         if ($exception instanceof UnauthorizedException) {
             return redirect()
                 ->route(home_route())

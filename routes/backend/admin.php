@@ -81,7 +81,7 @@ Route::group(['middleware' => 'permission:trainer_access'], function () {
     Route::get('send-reminder-all-users', 'Admin\ManualAssessmentController@sendReminderAllUsers');
 
 
-    Route::get('final-submit', 'Admin\AssessmentAccountsController@final_submit')->name('assessment_accounts.final-submit');
+    Route::get('final-submit/{id?}', 'Admin\AssessmentAccountsController@final_submit')->name('assessment_accounts.final-submit');
     Route::post('final-submit-store', 'Admin\AssessmentAccountsController@final_submit_store')->name('assessment_accounts.final-submit-store');
     Route::post('course-assignment', 'Admin\AssessmentAccountsController@course_assignment')->name('assessment_accounts.course-assignment');
 
@@ -140,6 +140,9 @@ Route::group(['middleware' => 'permission:trainer_access'], function () {
     Route::get('settings/general', ['uses' => 'Admin\ConfigController@getGeneralSettings', 'as' => 'general-settings']);
 
     Route::post('settings/general', ['uses' => 'Admin\ConfigController@saveGeneralSettings'])->name('general-settings');
+
+    
+    Route::get('settings/landing-page-setting', ['uses' => 'Admin\ConfigController@getLandingPageSettings', 'as' => 'landing-page-setting']);
 
     Route::post('settings/contact', ['uses' => 'Admin\ConfigController@saveGeneralSettings'])->name('general-contact');
 

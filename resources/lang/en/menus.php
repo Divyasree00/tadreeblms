@@ -68,6 +68,7 @@ return array(
         'general' => 'General',
         'social-login' => 'Social Login',
         'zoom_setting' => 'Zoom Setting',
+        'landing_page_setting' => 'Landing Page Setting',
       ),
       'debug-site' =>
       array(

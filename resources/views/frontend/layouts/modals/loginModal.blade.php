@@ -311,6 +311,27 @@
 
     
     <script>
+
+        const refreshCaptchaUrl = "{{ route('refresh_captcha') }}";
+
+        function loadCaptcha(mode) {
+            fetch(refreshCaptchaUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if(mode == 'login') {
+                        document.getElementById('login-captcha-question').innerText =
+                        data.captcha_question;
+                    }
+                    if(mode == 'register') {
+                        //alert("hi")
+                        document.getElementById('register-captcha-question').innerText =
+                        data.captcha_question;
+                    }
+                });
+        }
+
+        
+
         $(function () {
             $.ajaxSetup({
                 headers: {
@@ -320,6 +341,8 @@
 
             $(document).ready(function () {
                 $(document).on('click', '.go-login', function () {
+
+                     //loadCaptcha('login');   
                      $('#myRegisterModal').modal('hide');
                      $('#myModal').modal('show');
                     // $('#register').removeClass('active').addClass('fade')
@@ -327,6 +350,7 @@
 
                 });
                 $(document).on('click', '.go-register', function () {
+                    //loadCaptcha('register');
                     $('#login').removeClass('active').addClass('fade')
                     $('#register').addClass('active').removeClass('fade')
                 });
@@ -340,7 +364,7 @@
                         url: "{{route('frontend.auth.login')}}",
                         success: function (response) {
 
-                            //console.log(response)
+                            loadCaptcha('login');
 
                             $('#login-captcha-question').html(response.captcha_question)
                             $('#socialLinks').html(response.socialLinks)
@@ -367,7 +391,7 @@
                         url: "{{route('frontend.auth.register')}}",
                         success: function (response) {
                             $('#socialLinks').html(response.socialLinks);
-
+                            loadCaptcha('register');
                              $('#register-captcha-question').html(response.captcha_question);
                             let form = $('#myRegisterModal').find('form')[0];
                             if (form) form.reset();
@@ -417,7 +441,7 @@
                             if (response.success) {
                                 window.location.href = response.redirect;
 
-                                location.reload();
+                                //location.reload();
 
                                 // $('#loginForm')[0].reset();
                                 // if (response.redirect == 'back') {
