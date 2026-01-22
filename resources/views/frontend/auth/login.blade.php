@@ -1,6 +1,54 @@
 @extends('frontend.layouts.app' . config('theme_layout'))
 
-@section('title', app_name() . ' | ' . __('labels.frontend.auth.login_box_title'))
+@section('title', app_name().' | '.__('labels.frontend.auth.login_box_title'))
+
+<style>
+
+    .ftlogo {
+        align-items: center !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+
+    .card-header {
+        text-align: center;
+        padding: 25px;
+        background-color: transparent !important;
+        border-bottom: 0 !important;
+    }
+
+    .error-block {
+        margin-bottom: 16px;
+        padding: 0 10px;
+        font-size: 15px;
+    }
+    h2, h3 {
+        font-weight: 500;
+        margin-top: 20px;
+    }
+
+    .nws-button button {
+        height: 50px !important;
+        width: auto !important;
+        font-size: 15px;
+    }
+
+    .form-group.nws-button {
+        text-align: center;
+    }
+
+    .card {
+        /* padding: 20px; */
+        margin: 35px;
+    }
+
+    .breadcrumb-section {
+        background-color: #c1902d4a;
+        padding: 75px 0;
+    }
+    
+</style>
 
 @section('content')
     <div class="row justify-content-center align-items-center">
